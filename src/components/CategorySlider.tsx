@@ -23,7 +23,7 @@ export function CategorySlider({ selectedCategory, onSelectCategory }: CategoryS
 
   return (
     <div className="max-w-6xl mx-auto px-4 mb-8">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-center gap-3">
         <Button
           variant="ghost"
           size="icon"

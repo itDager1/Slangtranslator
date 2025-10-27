@@ -1,5 +1,3 @@
-import { Search } from "lucide-react";
-import { Input } from "./ui/input";
 import { TranslationMode } from "../App";
 
 interface SearchBarProps {
@@ -10,25 +8,28 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ value, onChange, onSearch, translationMode }: SearchBarProps) {
-  const placeholder = translationMode === "slangToRussian" 
-    ? "Введите сленговое слово..." 
-    : "Введите обычное слово...";
+  const placeholder = "Введите текст...";
     
   return (
-    <div className="max-w-3xl mx-auto px-4 mb-6">
-      <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-        <Input
-          type="text"
+    <div className="w-full">
+      <div className="bg-gray-800 rounded-xl p-6 min-h-[280px] flex flex-col">
+        <textarea
           placeholder={placeholder}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            const newValue = e.target.value;
+            onChange(newValue);
+            if (newValue.trim()) {
+              onSearch(newValue.trim());
+            }
+          }}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && value.trim()) {
+            if (e.key === 'Enter' && !e.shiftKey && value.trim()) {
+              e.preventDefault();
               onSearch(value.trim());
             }
           }}
-          className="pl-12 py-6 rounded-xl border-gray-200"
+          className="w-full flex-1 bg-transparent border-none outline-none text-white placeholder:text-gray-400 resize-none"
         />
       </div>
     </div>

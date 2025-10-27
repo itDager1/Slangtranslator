@@ -5,9 +5,6 @@ export function Footer() {
         <p className="text-center text-gray-600 text-sm">
           SlangTranslator — переводчик для понимания русского интернет-сленга
         </p>
-        <p className="text-center text-gray-500 text-xs mt-2">
-          © 2025 SlangTranslator. Все права защищены.
-        </p>
       </div>
     </footer>
   );
