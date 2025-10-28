@@ -1,5 +1,6 @@
-import { Sparkles } from "lucide-react";
+import { Sparkles, Star } from "lucide-react";
 import { TranslationMode } from "../App";
+import { Button } from "./ui/button";
 
 interface TranslationDisplayProps {
   selectedWord: string | null;
@@ -12,9 +13,11 @@ interface TranslationDisplayProps {
     explanations?: Array<{ word: string; explanation: string }>;
   } | null;
   translationMode: TranslationMode;
+  isFavorite: boolean;
+  onToggleFavorite: () => void;
 }
 
-export function TranslationDisplay({ selectedWord, translation, translationMode }: TranslationDisplayProps) {
+export function TranslationDisplay({ selectedWord, translation, translationMode, isFavorite, onToggleFavorite }: TranslationDisplayProps) {
   if (!selectedWord || !translation) {
     return (
       <div className="w-full bg-gray-800 rounded-xl p-6 min-h-[280px] flex flex-col">
@@ -23,15 +26,36 @@ export function TranslationDisplay({ selectedWord, translation, translationMode 
     );
   }
 
-  // Если есть shortTranslation, показываем его как перевод, а definition как объяснение
-  // Если нет shortTranslation, показываем definition как перевод (например, для предложений)
+  // Если есть shortTranslation - это одиночное слово, показываем краткий перевод
+  // Если нет shortTranslation - это предложение, показываем полный переведенный текст
   const translatedText = translation.shortTranslation || translation.definition;
   const hasExplanation = translation.shortTranslation && translation.definition;
+  
+  // Функция для преобразования первой буквы в нижний регистр
+  const lowercaseFirst = (str: string) => {
+    if (!str) return str;
+    return str.charAt(0).toLowerCase() + str.slice(1);
+  };
 
   return (
-    <div className="w-full bg-gray-800 rounded-xl p-6 min-h-[280px] flex flex-col overflow-y-auto">
-      <div className="mb-4">
-        <h2 className="text-white">{translatedText}</h2>
+    <div className="w-full bg-gray-800 rounded-xl p-6 min-h-[280px] flex flex-col overflow-y-auto relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={onToggleFavorite}
+        className="absolute top-4 right-4 hover:bg-gray-700"
+      >
+        <Star 
+          className="w-5 h-5" 
+          style={{ 
+            color: isFavorite ? '#FFD700' : '#9ca3af',
+            fill: isFavorite ? '#FFD700' : 'none'
+          }} 
+        />
+      </Button>
+      
+      <div className="mb-4 pr-10">
+        <h2 className="text-white font-normal">{translatedText}</h2>
       </div>
 
       {hasExplanation && (
@@ -49,8 +73,8 @@ export function TranslationDisplay({ selectedWord, translation, translationMode 
           <div className="space-y-3">
             {translation.explanations.map((item, index) => (
               <div key={index} className="text-sm">
-                <span className="text-purple-400">{item.word}</span>
-                <span className="text-gray-400"> — {item.explanation}</span>
+                <span className="capitalize" style={{ color: '#FFD700' }}>{item.word}</span>
+                <span className="text-gray-400"> — {lowercaseFirst(item.explanation)}</span>
               </div>
             ))}
           </div>

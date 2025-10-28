@@ -26,6 +26,16 @@ const popularSlangWords: Word[] = [
   { word: "Нуб", definition: "Новичок", category: "Игры" },
   { word: "Краш", definition: "Объект симпатии", category: "Отношения" },
   { word: "Токсик", definition: "Неприятный человек", category: "Общение" },
+  { word: "Жиза", definition: "Жизненная ситуация", category: "Эмоции" },
+  { word: "Видос", definition: "Видео, ролик", category: "Интернет" },
+  { word: "Сторис", definition: "Истории в соцсетях", category: "Интернет" },
+  { word: "Скин", definition: "Внешний вид персонажа", category: "Игры" },
+  { word: "Буст", definition: "Усиление, ускорение", category: "Игры" },
+  { word: "Огонь", definition: "Отлично, круто", category: "Стиль жизни" },
+  { word: "Топ", definition: "Лучший, высшего качества", category: "Стиль жизни" },
+  { word: "Влог", definition: "Видеоблог о жизни", category: "Медиа" },
+  { word: "Рилс", definition: "Короткие видео", category: "Медиа" },
+  { word: "Френдзона", definition: "Дружеская зона", category: "Отношения" },
 ];
 
 const popularRussianWords: Word[] = [
@@ -39,17 +49,23 @@ const popularRussianWords: Word[] = [
   { word: "Нравится", definition: "Краш", category: "Отношения" },
   { word: "Шутка", definition: "Мем", category: "Интернет" },
   { word: "Новичок", definition: "Нуб", category: "Игры" },
+  { word: "Круто", definition: "Огонь, Топ, Бомба", category: "Стиль жизни" },
+  { word: "Видео", definition: "Видос", category: "Интернет" },
+  { word: "Голосовое", definition: "Войс", category: "Интернет" },
+  { word: "Усиление", definition: "Буст, Баф", category: "Игры" },
+  { word: "Создавать", definition: "Крафтить", category: "Игры" },
+  { word: "Розыгрыш", definition: "Пранк", category: "Медиа" },
+  { word: "Видеоблог", definition: "Влог", category: "Медиа" },
+  { word: "Кокетничать", definition: "Флиртовать", category: "Отношения" },
 ];
 
 export function PopularWords({ onSelectWord, selectedWord, translationMode, selectedCategory }: PopularWordsProps) {
   const allWords = translationMode === "slangToRussian" ? popularSlangWords : popularRussianWords;
   
   // Filter words by category
-  const words = selectedCategory === "Все категории" 
-    ? allWords 
-    : allWords.filter(word => word.category === selectedCategory);
+  const words = allWords.filter(word => word.category === selectedCategory);
   
-  const title = translationMode === "slangToRussian" ? "Популярные слова" : "Популярные запросы";
+  const title = translationMode === "slangToRussian" ? "Популярные запросы" : "Популярные запросы";
   
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-6">

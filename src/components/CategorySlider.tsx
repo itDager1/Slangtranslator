@@ -45,7 +45,7 @@ export function CategorySlider({ selectedCategory, onSelectCategory }: CategoryS
               onClick={() => onSelectCategory(category)}
               className={`shrink-0 rounded-lg ${
                 selectedCategory === category
-                  ? "bg-purple-600 hover:bg-purple-700 text-white"
+                  ? "bg-yellow-600 hover:bg-yellow-700 text-white"
                   : "bg-white hover:bg-gray-50 border-gray-200"
               }`}
             >
