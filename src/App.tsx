@@ -28,6 +28,7 @@ import { WordsList } from "./components/WordsList";
 import { Button } from "./components/ui/button";
 import { ChevronDown, ArrowRightLeft } from "lucide-react";
 import { Toaster } from "./components/ui/sonner";
+import { translationAPI } from "./utils/api";
 
 export type TranslationMode = "slangToRussian" | "russianToSlang";
 
@@ -2425,71 +2426,41 @@ export default function App() {
     return wordFormsMap[lowerWord] || lowerWord;
   };
 
-  const handleSearch = (text: string) => {
-    const currentDictionary = translationMode === "slangToRussian" ? dictionary : reverseDictionary;
-    
-    // Split text into words, preserving punctuation
-    const words = text.split(/(\s+|[.,!?;:—\-«»"„…]+)/);
-    
-    let translatedText = "";
-    let foundWords: string[] = [];
-    let wordExplanations: Array<{ word: string; explanation: string }> = [];
-    
-    // Process each word
-    words.forEach(token => {
-      const lowerToken = token.toLowerCase().trim();
+  const handleSearch = async (text: string) => {
+    try {
+      // Use backend API for translation
+      const response = await translationAPI.translate(text, translationMode);
       
-      if (lowerToken) {
-        // First try direct match
-        let entry = currentDictionary[lowerToken];
-        let baseForm = lowerToken;
+      if (response.success && response.translation) {
+        const result = response.translation;
+        setSelectedWord(text);
         
-        // If not found, try to find base form
-        if (!entry) {
-          baseForm = findBaseForm(lowerToken);
-          entry = currentDictionary[baseForm];
-        }
+        // Format the translation for display
+        setTranslation({
+          word: result.word || text,
+          definition: result.definition || "",
+          examples: result.examples || [`Исходный текст: ${text}`],
+          category: result.category || "Перевод",
+          explanations: result.explanations || undefined
+        });
         
-        // If we found a translation
-        if (entry) {
-          // Use shortTranslation for single word replacement, otherwise use definition
-          const translationText = entry.shortTranslation || entry.definition;
-          // Match the case of the original word
-          const casedTranslation = matchCase(token.trim(), translationText);
-          translatedText += casedTranslation;
-          foundWords.push(lowerToken);
-          
-          // Store explanation for slang words (when translating from slang to Russian)
-          if (translationMode === "slangToRussian" && entry.definition) {
-            wordExplanations.push({
-              word: token.trim(),
-              explanation: entry.definition
-            });
-          }
-        } else {
-          // Keep original token if no translation found
-          translatedText += token;
-        }
+        // Add to history - use definition as translated text
+        addToHistory(text, result.definition || result.shortTranslation || "");
       } else {
-        // Keep spaces and punctuation
-        translatedText += token;
+        // If backend returns no translation
+        setSelectedWord(text);
+        setTranslation({
+          word: text,
+          definition: "Извините, в этом тексте не найдено слов из нашего словаря. Попробуйте другие слова из популярных.",
+          examples: [],
+          category: ""
+        });
       }
-    });
-    
-    // If we found at least one word, show translated sentence
-    if (foundWords.length > 0) {
-      setSelectedWord(text);
-      setTranslation({
-        word: text,
-        definition: translatedText,
-        examples: [`Исходный текст: ${text}`],
-        category: "Перевод предложения",
-        explanations: wordExplanations.length > 0 ? wordExplanations : undefined
-      });
-      // Add to history
-      addToHistory(text, translatedText);
-    } else {
-      // Single word lookup for backwards compatibility
+    } catch (error) {
+      console.error("Translation error:", error);
+      
+      // Fallback to local dictionary on error
+      const currentDictionary = translationMode === "slangToRussian" ? dictionary : reverseDictionary;
       const wordKey = text.toLowerCase().trim();
       const baseForm = findBaseForm(wordKey);
       const found = currentDictionary[baseForm];
@@ -2497,13 +2468,12 @@ export default function App() {
       if (found) {
         setSelectedWord(text);
         setTranslation(found);
-        // Add to history - use shortTranslation or definition
         addToHistory(text, found.shortTranslation || found.definition);
       } else {
         setSelectedWord(text);
         setTranslation({
           word: text,
-          definition: "Извините, в этом тексте не найдено слов из нашего словаря. Попробуйте другие слова из популярных.",
+          definition: "Ошибка подключения к серверу. Проверьте интернет-соединение.",
           examples: [],
           category: ""
         });

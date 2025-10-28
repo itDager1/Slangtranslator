@@ -88,12 +88,14 @@ export function TranslationDisplay({ selectedWord, translation, translationMode,
 
       {translation.explanations && translation.explanations.length > 0 && (
         <div className="mt-4 pt-4 border-t border-gray-700">
-          <h3 className="text-gray-400 mb-2 text-sm font-['Roboto'] text-[16px]">Объяснение слов:</h3>
+          <h3 className="text-gray-400 mb-2 text-sm font-['Roboto'] text-[16px]">
+            {translation.explanations.length === 1 ? 'Объяснение слова:' : 'Объяснение слов:'}
+          </h3>
           <div className="space-y-3">
             {translation.explanations.map((item, index) => (
               <div key={index} className="text-sm">
-                <span className="capitalize" style={{ color: '#FFD700' }}>{item.word}</span>
-                <span className="text-gray-400 font-['Times_New_Roman'] text-[14px] font-[Sansation]"> — {lowercaseFirst(item.explanation)}</span>
+                <span className="font-medium" style={{ color: '#FFD700' }}>{item.word}</span>
+                <span className="text-gray-300 text-[14px]"> — {lowercaseFirst(item.explanation)}</span>
               </div>
             ))}
           </div>
@@ -102,9 +104,9 @@ export function TranslationDisplay({ selectedWord, translation, translationMode,
 
       {translation.examples && translation.examples.length > 0 && (
         <div className="mt-4 pt-4 border-t border-gray-700">
-          <h3 className="text-gray-400 mb-2 text-sm font-[Roboto] text-[16px]">Примеры:</h3>
+          <h3 className="text-gray-400 mb-2 text-sm font-[Roboto] text-[16px]">Примеры использования:</h3>
           <div className="space-y-2">
-            {translation.examples.slice(0, 2).map((example, index) => (
+            {translation.examples.slice(0, 3).map((example, index) => (
               <div key={index} className="text-gray-400 text-sm italic font-[Sansation] text-[14px]">
                 • {example}
               </div>

@@ -1129,10 +1129,6 @@
     font-family: Roboto;
   }
 
-  .font-\[\'Times_New_Roman\'\] {
-    font-family: Times New Roman;
-  }
-
   .font-\[Mako\] {
     font-family: Mako;
   }
@@ -1295,10 +1291,6 @@
 
   .text-yellow-600 {
     color: var(--color-yellow-600);
-  }
-
-  .capitalize {
-    text-transform: capitalize;
   }
 
   .uppercase {

@@ -6,7 +6,7 @@ import { VirtualKeyboard } from "./VirtualKeyboard";
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
-  onSearch: (word: string) => void;
+  onSearch: (word: string) => void | Promise<void>;
   translationMode: TranslationMode;
 }
 
