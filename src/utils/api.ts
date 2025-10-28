@@ -118,10 +118,13 @@ export const statsAPI = {
 export const translationAPI = {
   // Перевести текст
   translate: async (text: string, mode: string) => {
-    return apiRequest('/translate', {
+    console.log(`translationAPI.translate - text: "${text}", mode: ${mode}`);
+    const result = await apiRequest('/translate', {
       method: 'POST',
       body: JSON.stringify({ text, mode }),
     });
+    console.log('translationAPI.translate - result:', result);
+    return result;
   },
 };
 

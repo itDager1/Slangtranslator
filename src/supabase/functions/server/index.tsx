@@ -707,7 +707,7 @@ const wordFormsMap: Record<string, string> = {
   "замедление": "замедление",
   "ошибка": "ошибка",
   "мошенник": "мошенник",
-  "возрождение": "возрождение",
+  "возрождение": "возрож��ение",
   "убийство": "убийство",
   "отсиживающийся": "отсиживающийся",
   "смех": "смех",
@@ -2082,12 +2082,14 @@ function normalizeWord(word: string): string {
 // Translate a single word with morphology
 function translateWord(word: string, mode: string): DictionaryEntry | null {
   const normalizedWord = normalizeWord(word);
+  console.log(`translateWord - word: "${word}", normalized: "${normalizedWord}", mode: ${mode}`);
   
   if (mode === "slangToRussian") {
     return dictionary[normalizedWord] || null;
   } else {
     // Russian to Slang
     const slangWord = russianToSlangMap[normalizedWord];
+    console.log(`russianToSlang - slangWord from map: "${slangWord}"`);
     if (slangWord && dictionary[slangWord]) {
       const entry = dictionary[slangWord];
       return {
@@ -2276,6 +2278,7 @@ app.post("/make-server-6f7662b1/translate", async (c) => {
       console.error("Error updating stats:", error);
     }
     
+    console.log('Returning translation result:', JSON.stringify(result, null, 2));
     return c.json({
       success: true,
       translation: result

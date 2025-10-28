@@ -218,7 +218,7 @@ const wordFormsMap: Record<string, string> = {
   "хайпили": "хайпить",
   "хайплю": "хайпить",
   "хайпишь": "хайпить",
-  "хайпит": "хайпить",
+  "ха��пит": "хайпить",
   "хайпим": "хайпить",
   "хайпите": "хайпить",
   "хайпят": "хайпить",
@@ -1585,7 +1585,7 @@ const dictionary: Record<string, DictionaryEntry> = {
     shortTranslation: "хвастаться",
     examples: [
       "Он постоянно флексит новыми кроссовками",
-      "Хватит флексить своими оценками"
+      "Хватит флексить своими оце��ками"
     ],
     category: "Стиль жизни"
   },
@@ -2529,7 +2529,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 mb-8">
           {/* Language selector header */}
           <div className="mb-4 flex items-center justify-center gap-4">
-            <div className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between w-36">
+            <div className="bg-yellow-600 border border-yellow-500 rounded-lg px-4 py-3 flex items-center justify-between w-36">
               <span className="text-[rgb(255,255,255)] uppercase font-normal text-[16px]">{translationMode === "slangToRussian" ? "Сленг" : "текст"}</span>
             </div>
             
@@ -2542,7 +2542,7 @@ export default function App() {
               <ArrowRightLeft className="w-5 h-5 text-gray-600" />
             </Button>
             
-            <div className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between w-36">
+            <div className="bg-yellow-600 border border-yellow-500 rounded-lg px-4 py-3 flex items-center justify-between w-36">
               <span className="text-[rgb(255,255,255)] font-[Mako] uppercase">{translationMode === "slangToRussian" ? "текст" : "Сленг"}</span>
             </div>
           </div>
