@@ -24,6 +24,7 @@ import { Stats } from "./components/Stats";
 import { Footer } from "./components/Footer";
 import { TranslationHistory, HistoryEntry } from "./components/TranslationHistory";
 import { FavoriteTranslations, FavoriteItem } from "./components/FavoriteTranslations";
+import { WordsList } from "./components/WordsList";
 import { Button } from "./components/ui/button";
 import { ChevronDown, ArrowRightLeft } from "lucide-react";
 import { Toaster } from "./components/ui/sonner";
@@ -1855,7 +1856,7 @@ const dictionary: Record<string, DictionaryEntry> = {
       "Кек, это смешно",
       "Кекнул с твоей шутки"
     ],
-    category: "Интернет"
+    category: "Инт��рнет"
   },
   "имба": {
     word: "Имба",
@@ -2557,8 +2558,8 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 mb-8">
           {/* Language selector header */}
           <div className="mb-4 flex items-center justify-center gap-4">
-            <div className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between w-36">
-              <span className="text-[rgb(255,255,255)] font-['Lora'] uppercase font-[Mako] font-normal text-[16px]">{translationMode === "slangToRussian" ? "Сленг" : "текст"}</span>
+            <div className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between w-36">
+              <span className="text-[rgb(255,255,255)] uppercase font-normal text-[16px]">{translationMode === "slangToRussian" ? "Сленг" : "текст"}</span>
             </div>
             
             <Button 
@@ -2570,7 +2571,7 @@ export default function App() {
               <ArrowRightLeft className="w-5 h-5 text-gray-600" />
             </Button>
             
-            <div className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between w-36">
+            <div className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between w-36">
               <span className="text-[rgb(255,255,255)] font-[Mako] uppercase">{translationMode === "slangToRussian" ? "текст" : "Сленг"}</span>
             </div>
           </div>
@@ -2611,6 +2612,13 @@ export default function App() {
             selectedWord={selectedWord}
             translationMode={translationMode}
             selectedCategory={selectedCategory}
+          />
+        </div>
+        
+        <div className="max-w-6xl mx-auto px-4 mb-8">
+          <WordsList 
+            category={selectedCategory} 
+            onSelectWord={handleSelectWord}
           />
         </div>
         

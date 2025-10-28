@@ -43,6 +43,11 @@ export const dictionaryAPI = {
   search: async (query: string, mode: string = "slangToRussian", limit: number = 10) => {
     return apiRequest(`/search?q=${encodeURIComponent(query)}&mode=${mode}&limit=${limit}`);
   },
+
+  // Получить слова по категории
+  getByCategory: async (category: string) => {
+    return apiRequest(`/words/${encodeURIComponent(category)}`);
+  },
 };
 
 // ============================================================================
