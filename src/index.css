@@ -1008,8 +1008,8 @@
     padding-right: calc(var(--spacing) * 6);
   }
 
-  .pr-10 {
-    padding-right: calc(var(--spacing) * 10);
+  .pr-20 {
+    padding-right: calc(var(--spacing) * 20);
   }
 
   .pb-8 {
@@ -1028,8 +1028,24 @@
     font-family: Lora;
   }
 
+  .font-\[\'Roboto\'\] {
+    font-family: Roboto;
+  }
+
+  .font-\[\'Times_New_Roman\'\] {
+    font-family: Times New Roman;
+  }
+
   .font-\[Mako\] {
     font-family: Mako;
+  }
+
+  .font-\[Roboto\] {
+    font-family: Roboto;
+  }
+
+  .font-\[Sansation\] {
+    font-family: Sansation;
   }
 
   .text-4xl {
@@ -1050,6 +1066,10 @@
   .text-xs {
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
+  }
+
+  .text-\[14px\] {
+    font-size: 14px;
   }
 
   .text-\[16px\] {
@@ -1085,6 +1105,10 @@
 
   .text-amber-500 {
     color: var(--color-amber-500);
+  }
+
+  .text-amber-600 {
+    color: var(--color-amber-600);
   }
 
   .text-black {

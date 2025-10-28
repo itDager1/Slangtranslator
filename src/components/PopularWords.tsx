@@ -69,7 +69,7 @@ export function PopularWords({ onSelectWord, selectedWord, translationMode, sele
   
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-6">
-      <h3 className="text-gray-900 mb-4">{title}</h3>
+      <h3 className="text-gray-900 mb-4 text-[20px] font-[Roboto]">{title}</h3>
 
       {words.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
@@ -89,7 +89,7 @@ export function PopularWords({ onSelectWord, selectedWord, translationMode, sele
             >
               <div className={`mb-1 ${
                 selectedWord?.toLowerCase() === item.word.toLowerCase()
-                  ? 'text-purple-600'
+                  ? 'text-amber-600'
                   : 'text-gray-900'
               }`}>
                 {item.word}

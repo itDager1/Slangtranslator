@@ -26,6 +26,7 @@ import { TranslationHistory, HistoryEntry } from "./components/TranslationHistor
 import { FavoriteTranslations, FavoriteItem } from "./components/FavoriteTranslations";
 import { Button } from "./components/ui/button";
 import { ChevronDown, ArrowRightLeft } from "lucide-react";
+import { Toaster } from "./components/ui/sonner";
 
 export type TranslationMode = "slangToRussian" | "russianToSlang";
 
@@ -2051,7 +2052,7 @@ const dictionary: Record<string, DictionaryEntry> = {
   "флиртовать": { word: "Флиртовать", definition: "Кокетничать.", shortTranslation: "кокетничать", examples: ["Флиртует со мной", "Начал флиртовать"], category: "Отношения" },
   "вайб": { word: "Вайб (о человеке)", definition: "Энергетика человека.", shortTranslation: "энергия", examples: ["У него классный вайб", "Вайб совпал"], category: "Отношения" },
   "токсичные отношения": { word: "Токсичные отношения", definition: "Нездоровые отношения.", shortTranslation: "токсик", examples: ["Токсичные отношения", "Это токсик"], category: "Отношения" },
-  "бывший": { word: "Бывший", definition: "Экс-партнер.", shortTranslation: "экс", examples: ["Встретил бывшего", "Мой бывший"], category: "Отношения" },
+  "бывший": { word: "Бывший", definition: "Э��с-партнер.", shortTranslation: "экс", examples: ["Встретил бывшего", "Мой бывший"], category: "Отношения" },
   "зафрендзонить": { word: "Зафрендзонить", definition: "Отправить во френдзону.", shortTranslation: "отказать", examples: ["Она меня зафрендзонила", "Зафрендзонил его"], category: "Отношения" }
 };
 
@@ -2619,6 +2620,16 @@ export default function App() {
       </main>
       
       <Footer />
+      <Toaster 
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: '#22c55e',
+            color: '#ffffff',
+            border: 'none',
+          },
+        }}
+      />
     </div>
   );
 }
