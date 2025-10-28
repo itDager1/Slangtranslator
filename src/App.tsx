@@ -2439,13 +2439,14 @@ export default function App() {
         setTranslation({
           word: result.word || text,
           definition: result.definition || "",
+          shortTranslation: result.shortTranslation || undefined,
           examples: result.examples || [`Исходный текст: ${text}`],
           category: result.category || "Перевод",
           explanations: result.explanations || undefined
         });
         
-        // Add to history - use definition as translated text
-        addToHistory(text, result.definition || result.shortTranslation || "");
+        // Add to history - use shortTranslation if available, otherwise definition
+        addToHistory(text, result.shortTranslation || result.definition || "");
       } else {
         // If backend returns no translation
         setSelectedWord(text);
