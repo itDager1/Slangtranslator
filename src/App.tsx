@@ -408,7 +408,7 @@ const wordFormsMap: Record<string, string> = {
   "сасных": "сасный",
   "сасными": "сасный",
   
-  // Формы прилагательного "годный"
+  // ����ормы прилагательного "годный"
   "годного": "годный",
   "годному": "годный",
   "годным": "годный",
@@ -694,7 +694,7 @@ const wordFormsMap: Record<string, string> = {
   // Глагольные формы "спамить"
   "спамить": "спам",
   "спамил": "спам",
-  "спамила": "спам",
+  "��памила": "спам",
   "спамили": "спам",
   "спамлю": "спам",
   "спамишь": "спам",
@@ -740,7 +740,7 @@ const wordFormsMap: Record<string, string> = {
   "рандомных": "рандом",
   "рандомными": "рандом",
   
-  // Дополнительные глагольные формы для "кекать"
+  // Дополнител��ные глагольные формы для "кекать"
   "кекать": "кек",
   "кекал": "кек",
   "кекала": "кек",
@@ -1001,7 +1001,7 @@ const wordFormsMap: Record<string, string> = {
   "движухой": "движуха",
   "блогера": "блогер",
   "блогеру": "блогер",
-  "блогером": "блогер",
+  "блогером": "блог��р",
   "блогере": "блогер",
   "блогеры": "блогер",
   "блогеров": "блогер",
@@ -1170,7 +1170,7 @@ const wordFormsMap: Record<string, string> = {
   "тролли": "троллить",
   "троллей": "троллить",
   "троллям": "троллить",
-  "троллями": "троллить",
+  "тро����лями": "троллить",
   "троллях": "троллить",
   
   // Формы "хейт" (существительное)
@@ -1213,7 +1213,7 @@ const wordFormsMap: Record<string, string> = {
   // Формы существительного "эпик"
   "эпик": "эпик",
   "эпика": "эпик",
-  "эпику": "эпик",
+  "эпику": "э��ик",
   "эпиком": "эпик",
   "эпике": "эпик",
   
@@ -1632,7 +1632,7 @@ const dictionary: Record<string, DictionaryEntry> = {
     definition: "Ненавидеть, критиковать, испытывать неприязнь. От английского 'hate'.",
     shortTranslation: "ненавидеть",
     examples: [
-      "Зачем ты его хейтишь?",
+      "Зачем ты его хейт��шь?",
       "Хейтеры всегда будут хейтить"
     ],
     category: "Общение"
@@ -1997,7 +1997,7 @@ const dictionary: Record<string, DictionaryEntry> = {
   "пвп": { word: "ПВП", definition: "Игрок против игрока. От PvP.", shortTranslation: "дуэль", examples: ["Пойдем в пвп", "Режим пвп"], category: "Игры" },
   "пве": { word: "ПВЕ", definition: "Игрок против окружения. От PvE.", shortTranslation: "кооператив", examples: ["Играю в пве", "Режим пве"], category: "Игры" },
   "крафт": { word: "Крафт", definition: "Создание предметов в игре.", shortTranslation: "создание", examples: ["Иду на крафт", "Крафт оружия"], category: "Игры" },
-  "крафтить": { word: "Крафтить", definition: "Создавать предметы.", shortTranslation: "создавать", examples: ["Крафчу броню", "Нужно крафтить"], category: "Игры" },
+  "крафтить": { word: "Крафтить", definition: "Создавать предметы.", shortTranslation: "создават��", examples: ["Крафчу броню", "Нужно крафтить"], category: "Игры" },
   "грайнд": { word: "Грайнд", definition: "Монотонное выполнение заданий.", shortTranslation: "рутина", examples: ["Тяжелый грайнд", "Грайнд ресурсов"], category: "Игры" },
   "грайндить": { word: "Грайндить", definition: "Монотонно выполнять задания.", shortTranslation: "фармить", examples: ["Грайнжу уровни", "Надоело грайндить"], category: "Игры" },
   "скин": { word: "Скин", definition: "Внешний вид персонажа или предмета.", shortTranslation: "облик", examples: ["Новый скин", "Купил скин"], category: "Игры" },
@@ -2021,7 +2021,7 @@ const dictionary: Record<string, DictionaryEntry> = {
   "окей": { word: "Окей", definition: "Хорошо, ладно, понятно.", shortTranslation: "хорошо", examples: ["Окей, понял", "Окей, давай"], category: "Общение" },
   "чётко": { word: "Чётко", definition: "Ясно, понятно, хорошо.", shortTranslation: "ясно", examples: ["Чётко, понял", "Всё чётко"], category: "Общение" },
   "базар": { word: "Базар", definition: "Разговор, обсуждение.", shortTranslation: "разговор", examples: ["Без базара", "Какой базар"], category: "Общение" },
-  "движ": { word: "Движ", definition: "Активность, движение, тусовка.", shortTranslation: "движение", examples: ["Сегодня движ", "Классный движ"], category: "Общение" },
+  "движ": { word: "Движ", definition: "Ак��ивност��, движение, тусовка.", shortTranslation: "движение", examples: ["Сегодня движ", "Классный движ"], category: "Общение" },
   "движуха": { word: "Движуха", definition: "Активность, события.", shortTranslation: "активность", examples: ["Какая-то движуха", "Много движухи"], category: "Общение" },
   "кринжовый": { word: "Кринжовый", definition: "Неловкий, стыдный.", shortTranslation: "неловкий", examples: ["Кринжовая ситуация", "Кринжовый момент"], category: "Общение" },
   
@@ -2557,9 +2557,8 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 mb-8">
           {/* Language selector header */}
           <div className="mb-4 flex items-center justify-center gap-4">
-            <div className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between w-48">
-              <span className="text-[rgb(255,255,255)] font-['Lora'] uppercase font-[Mako] font-normal text-[16px]">{translationMode === "slangToRussian" ? "Сленг" : "Русский"}</span>
-              <ChevronDown className="w-5 h-5 text-gray-400" />
+            <div className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between w-36">
+              <span className="text-[rgb(255,255,255)] font-['Lora'] uppercase font-[Mako] font-normal text-[16px]">{translationMode === "slangToRussian" ? "Сленг" : "текст"}</span>
             </div>
             
             <Button 
@@ -2571,9 +2570,8 @@ export default function App() {
               <ArrowRightLeft className="w-5 h-5 text-gray-600" />
             </Button>
             
-            <div className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between w-48">
-              <span className="text-[rgb(255,255,255)] font-[Mako] uppercase">{translationMode === "slangToRussian" ? "Русский" : "Сленг"}</span>
-              <ChevronDown className="w-5 h-5 text-gray-400" />
+            <div className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between w-36">
+              <span className="text-[rgb(255,255,255)] font-[Mako] uppercase">{translationMode === "slangToRussian" ? "текст" : "Сленг"}</span>
             </div>
           </div>
           

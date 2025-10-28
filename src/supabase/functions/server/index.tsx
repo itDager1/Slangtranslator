@@ -1,0 +1,1402 @@
+import { Hono } from "npm:hono";
+import { cors } from "npm:hono/cors";
+import { logger } from "npm:hono/logger";
+import * as kv from "./kv_store.tsx";
+
+const app = new Hono();
+
+// Enable logger
+app.use('*', logger(console.log));
+
+// Enable CORS for all routes and methods
+app.use(
+  "/*",
+  cors({
+    origin: "*",
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+  }),
+);
+
+// ========================
+// TYPES & DATA
+// ========================
+
+interface DictionaryEntry {
+  word: string;
+  definition: string;
+  shortTranslation?: string;
+  examples: string[];
+  category: string;
+  explanations?: Array<{ word: string; explanation: string }>;
+}
+
+// Word forms mapping - links various forms of a word to its base form
+const wordFormsMap: Record<string, string> = {
+  // Формы глагола "чилить"
+  "чилил": "чилить",
+  "чилила": "чилить",
+  "чилило": "чилить",
+  "чилили": "чилить",
+  "чилю": "чилить",
+  "чилишь": "чилить",
+  "чилит": "чилить",
+  "чилим": "чилить",
+  "чилите": "чилить",
+  "чилят": "чилить",
+  "чилящий": "чилить",
+  "почилить": "чилить",
+  "почилил": "чилить",
+  "почилила": "чилить",
+  "почилим": "чилить",
+  "чиль": "чилить",
+  "чильте": "чилить",
+  
+  // Формы "рофлить"
+  "рофлил": "рофлить",
+  "рофлила": "рофлить",
+  "рофлило": "рофлить",
+  "рофлили": "рофлить",
+  "рофлю": "рофлить",
+  "рофлишь": "рофлить",
+  "рофлит": "рофлить",
+  "рофлим": "рофлить",
+  "рофлите": "рофлить",
+  "рофлят": "рофлить",
+  "рофли": "рофлить",
+  "порофлить": "рофлить",
+  "порофлил": "рофлить",
+  
+  // Формы "флексить"
+  "флексил": "флексить",
+  "флексила": "флексить",
+  "флексило": "флексить",
+  "флексили": "флексить",
+  "флекшу": "флексить",
+  "флексишь": "флексить",
+  "флексит": "флексить",
+  "флексим": "флексить",
+  "флексите": "флексить",
+  "флексят": "флексить",
+  "флекси": "флексить",
+  "пофлексить": "флексить",
+  
+  // Формы существительного "флекс"
+  "флекса": "флекс",
+  "флексу": "флекс",
+  "флексом": "флекс",
+  "флексе": "флекс",
+  "флексы": "флекс",
+  "флексов": "флекс",
+  "флексам": "флекс",
+  "флексами": "флекс",
+  "флексах": "флекс",
+  
+  // Формы "хейтить"
+  "хейтил": "хейтить",
+  "хейтила": "хейтить",
+  "хейтило": "хейтить",
+  "хейтили": "хейтить",
+  "хейчу": "хейтить",
+  "хейтишь": "хейтить",
+  "хейтит": "хейтить",
+  "хейтим": "хейтить",
+  "хейтите": "хейтить",
+  "хейтят": "хейтить",
+  "хейть": "хейтить",
+  "похейтить": "хейтить",
+  "хейтер": "хейтить",
+  "хейтеры": "хейтить",
+  "хейтеров": "хейтить",
+  
+  // Формы "агриться"
+  "агрился": "агриться",
+  "агрилась": "агриться",
+  "агрилось": "агриться",
+  "агрились": "агриться",
+  "агрюсь": "агриться",
+  "агришься": "агриться",
+  "агрится": "агриться",
+  "агримся": "агриться",
+  "агритесь": "агриться",
+  "агрятся": "агриться",
+  "агрись": "агриться",
+  "заагриться": "агриться",
+  
+  // Формы "стримить"
+  "стримил": "стримить",
+  "стримила": "стримить",
+  "стримило": "стримить",
+  "стримили": "стримить",
+  "стримлю": "стримить",
+  "стримишь": "стримить",
+  "стримит": "стримить",
+  "стримим": "стримить",
+  "стримите": "стримить",
+  "стримят": "стримить",
+  
+  // Формы "донатить"
+  "донатил": "донатить",
+  "донатила": "донатить",
+  "донатило": "донатить",
+  "донатили": "донатить",
+  "доначу": "донатить",
+  "донатишь": "донатить",
+  "донатит": "донатить",
+  "донатим": "донатить",
+  "донатите": "донатить",
+  "донатят": "донатить",
+  "задонатил": "донатить",
+  "задонатила": "донатить",
+  "задонатили": "донатить",
+  
+  // Формы "троллить"
+  "троллил": "троллить",
+  "троллила": "троллить",
+  "троллило": "троллить",
+  "троллили": "троллить",
+  "троллю": "троллить",
+  "троллишь": "троллить",
+  "троллит": "троллить",
+  "троллим": "троллить",
+  "троллите": "троллить",
+  "троллят": "троллить",
+  "тролль": "троллить",
+  "потроллить": "троллить",
+  "затроллить": "троллить",
+  
+  // Формы "шипперить"
+  "шипперил": "шипперить",
+  "шипперила": "шипперить",
+  "шипперило": "шипперить",
+  "шипперили": "шипперить",
+  "шипперю": "шипперить",
+  "шипперишь": "шипперить",
+  "шипперит": "шипперить",
+  "шипперим": "шипперить",
+  "шипперите": "шипперить",
+  "шипперят": "шипперить",
+  
+  // Формы "хайпить"
+  "хайпил": "хайпить",
+  "хайпила": "хайпить",
+  "хайпило": "хайпить",
+  "хайпили": "хайпить",
+  "хайплю": "хайпить",
+  "хайпишь": "хайпить",
+  "хайпит": "хайпить",
+  "хайпим": "хайпить",
+  "хайпите": "хайпить",
+  "хайпят": "хайпить",
+  
+  // Формы существительного "краш"
+  "краша": "краш",
+  "крашу": "краш",
+  "крашем": "краш",
+  "краше": "краш",
+  "крашей": "краш",
+  "крашах": "краш",
+  "краши": "краш",
+  "крашами": "краш",
+  
+  // Формы "вайб"
+  "вайба": "вайб",
+  "вайбу": "вайб",
+  "вайбом": "вайб",
+  "вайбе": "вайб",
+  "вайбы": "вайб",
+  "вайбов": "вайб",
+  "вайбам": "вайб",
+  "вайбами": "вайб",
+  "вайбах": "вайб",
+  
+  // Формы "кринж"
+  "кринжа": "кринж",
+  "кринжу": "кринж",
+  "кринжем": "кринж",
+  "кринже": "кринж",
+  "кринжи": "кринж",
+  
+  // Формы "батхёрт"
+  "батхёрта": "батхёрт",
+  "батхёрту": "батхёрт",
+  "батхёртом": "батхёрт",
+  "батхёрте": "батхёрт",
+  "батхёрты": "батхёрт",
+  
+  // Формы "токсик"
+  "токсика": "токсик",
+  "токсику": "токсик",
+  "токсиком": "токсик",
+  "токсике": "токсик",
+  "токсики": "токсик",
+  "токсиков": "токсик",
+  "токсикам": "токсик",
+  "токсиками": "токсик",
+  "токсиках": "токсик",
+  
+  // Формы "зумер"
+  "зумера": "зумер",
+  "зумеру": "зумер",
+  "зумером": "зумер",
+  "зумере": "зумер",
+  "зумеры": "зумер",
+  "зумеров": "зумер",
+  "зумерам": "зумер",
+  "зумерами": "зумер",
+  "зумерах": "зумер",
+  
+  // Формы "бумер"
+  "бумера": "бумер",
+  "бумеру": "бумер",
+  "бумером": "бумер",
+  "бумере": "бумер",
+  "бумеры": "бумер",
+  "бумеров": "бумер",
+  "бумерам": "бумер",
+  "бумерами": "бумер",
+  "бумерах": "бумер",
+  
+  // Формы "рандом"
+  "рандома": "рандом",
+  "рандому": "рандом",
+  "рандомом": "рандом",
+  "рандоме": "рандом",
+  "рандомы": "рандом",
+  
+  // Формы "спойлер"
+  "спойлера": "спойлер",
+  "спойлеру": "спойлер",
+  "спойлером": "спойлер",
+  "спойлере": "спойлер",
+  "спойлеры": "спойлер",
+  "спойлеров": "спойлер",
+  
+  // Формы "мем"
+  "мема": "мем",
+  "мему": "мем",
+  "мемом": "мем",
+  "меме": "мем",
+  "мемы": "мем",
+  "мемов": "мем",
+  "мемам": "мем",
+  "мемами": "мем",
+  "мемах": "мем",
+  
+  // Формы "хайп"
+  "хайпа": "хайп",
+  "хайпу": "хайп",
+  "хайпом": "хайп",
+  "хайпе": "хайп",
+  "хайпы": "хайп",
+  
+  // Формы "пранк"
+  "пранка": "пранк",
+  "пранку": "пранк",
+  "пранком": "пранк",
+  "пранке": "пранк",
+  "пранки": "пранк",
+  "пранков": "пранк",
+  
+  // Формы "дроп"
+  "дропа": "дроп",
+  "дропу": "дроп",
+  "дропом": "дроп",
+  "дропе": "дроп",
+  "дропы": "дроп",
+  "дропов": "дроп",
+  
+  // Формы "гайд"
+  "гайда": "гайд",
+  "гайду": "гайд",
+  "гайдом": "гайд",
+  "гайде": "гайд",
+  "гайды": "гайд",
+  "гайдов": "гайд",
+  
+  // Дополнительные формы глаголов
+  "отдыхать": "отдыхать",
+  "отдыхал": "отдыхать",
+  "отдыхала": "отдыхать",
+  "отдыхали": "отдыхать",
+  "отдыхаю": "отдыхать",
+  "отдыхаешь": "отдыхать",
+  "отдыхает": "отдыхать",
+  "отдыхаем": "отдыхать",
+  "отдыхаете": "отдыхать",
+  "отдыхают": "отдыхать",
+  
+  "смеяться": "смеяться",
+  "смеялся": "смеяться",
+  "смеялась": "смеяться",
+  "смеялись": "смеяться",
+  "смеюсь": "смеяться",
+  "смеёшься": "смеяться",
+  "смеётся": "смеяться",
+  "смеёмся": "смеяться",
+  "смеётесь": "смеяться",
+  "смеются": "смеяться",
+  
+  "хвастаться": "хвастаться",
+  "хвастался": "хвастаться",
+  "хвасталась": "хвастаться",
+  "хвастались": "хвастаться",
+  "хвастаюсь": "хвастаться",
+  "хвастаешься": "хвастаться",
+  "хвастается": "хвастаться",
+  "хвастаемся": "хвастаться",
+  "хвастаетесь": "хвастаться",
+  "хвастаются": "хвастаться",
+  
+  "злиться": "злиться",
+  "злился": "злиться",
+  "злилась": "злиться",
+  "злились": "злиться",
+  "злюсь": "злиться",
+  "злишься": "злиться",
+  "злится": "злиться",
+  "злимся": "злиться",
+  "злитесь": "злиться",
+  "злятся": "злиться",
+  
+  "ненавидеть": "ненавидеть",
+  "ненавидел": "ненавидеть",
+  "ненавидела": "ненавидеть",
+  "ненавидели": "ненавидеть",
+  "ненавижу": "ненавидеть",
+  "ненавидишь": "ненавидеть",
+  "ненавидит": "ненавидеть",
+  "ненавидим": "ненавидеть",
+  "ненавидите": "ненавидеть",
+  "ненавидят": "ненавидеть",
+  
+  // Формы существительных
+  "шутка": "шутка",
+  "шутки": "шутка",
+  "шутке": "шутка",
+  "шутку": "шутка",
+  "шуткой": "шутка",
+  "шутках": "шутка",
+  "шуток": "шутка",
+  "шуткам": "шутка",
+  "шутками": "шутка",
+  
+  "обида": "обида",
+  "обиды": "обида",
+  "обиде": "обида",
+  "обиду": "обида",
+  "обидой": "обида",
+  "обидах": "обида",
+  "обид": "обида",
+  "обидам": "обида",
+  "обидами": "обида",
+  
+  // Формы "парень"
+  "парня": "парень",
+  "парню": "парень",
+  "парнем": "парень",
+  "парне": "парень",
+  "парни": "парень",
+  "парней": "парень",
+  "парням": "парень",
+  "парнями": "парень",
+  "парнях": "парень",
+  
+  // Формы "слабак"
+  "слабака": "слабак",
+  "слабаку": "слабак",
+  "слабаком": "слабак",
+  "слабаке": "слабак",
+  "слабаки": "слабак",
+  "слабаков": "слабак",
+  "слабакам": "слабак",
+  "слабаками": "слабак",
+  "слабаках": "слабак",
+  
+  // Формы прилагательного "слабый"
+  "слабая": "слабый",
+  "слабое": "слабый",
+  "слабые": "слабый",
+  "слабого": "слабый",
+  "слабой": "слабый",
+  "слабому": "слабый",
+  "слабым": "слабый",
+  "слабом": "слабый",
+  
+  // Формы "новичок"
+  "новичка": "новичок",
+  "новичку": "новичок",
+  "новичком": "новичок",
+  "новичке": "новичок",
+  "новички": "новичок",
+  "новичков": "новичок",
+  "новичкам": "новичок",
+  "новичками": "новичок",
+  "новичках": "новичок",
+  
+  // Формы "профи"
+  "профессионала": "профессионал",
+  "профессионалу": "профессионал",
+  "профессионалом": "профессионал",
+  "профессионале": "профессионал",
+  "профессионалы": "профессионал",
+  "профессионалов": "профессионал",
+};
+
+// Russian to Slang reverse mappings
+const russianToSlangMap: Record<string, string> = {
+  "отдыхать": "чилить",
+  "смеяться": "рофлить",
+  "хвастаться": "флексить",
+  "злиться": "агриться",
+  "ненавидеть": "хейтить",
+  "транслировать": "стримить",
+  "жертвовать": "донатить",
+  "провоцировать": "троллить",
+  "сводить": "шипперить",
+  "грустно": "скучно",
+  "обида": "батхёрт",
+  "плохо": "криво",
+  "смешно": "лол",
+  "боян": "баян",
+  "симпатия": "краш",
+  "хвастовство": "флекс",
+  "атмосфера": "вайб",
+  "неловко": "кринж",
+  "токсичный": "токсик",
+  "молодежь": "зумер",
+  "старик": "бумер",
+  "легко": "изи",
+  "пойдем": "го",
+  "случайность": "рандом",
+  "раскрытие": "спойлер",
+  "розыгрыш": "пранк",
+  "красивый": "сасный",
+  "шутка": "мем",
+  "слабак": "лейм",
+  "слабый": "лейм",
+  "парень": "чувак",
+  "человек": "чувак",
+  "мощный": "имба",
+  "сильный": "имба",
+  "новичок": "нуб",
+  "профи": "про",
+  "профессионал": "про",
+};
+
+// Dictionary data - Slang to Russian
+const dictionary: Record<string, DictionaryEntry> = {
+  "чилить": {
+    word: "Чилить",
+    definition: "Отдыхать, расслабляться, проводить время в спокойной обстановке без стресса и напряжения.",
+    shortTranslation: "отдыхать",
+    examples: [
+      "Сегодня весь день чилил дома, смотрел сериалы",
+      "Давай встретимся и просто почилим в парке"
+    ],
+    category: "Общение"
+  },
+  "скучно": {
+    word: "Скучно",
+    definition: "Грустно, печально. В молодежном сленге используется для выражения эмоций грусти или тоски.",
+    shortTranslation: "грустно",
+    examples: [
+      "Мне так скучно без тебя",
+      "Погода скучная, настроение тоже"
+    ],
+    category: "Эмоции"
+  },
+  "батхёрт": {
+    word: "Батхёрт",
+    definition: "Обида, досада, болезненная реакция на критику или неудачу. От английского 'butthurt'.",
+    shortTranslation: "обида",
+    examples: [
+      "У него полный батхёрт после вчерашнего спора",
+      "Не надо батхёртить по каждому поводу"
+    ],
+    category: "Эмоции"
+  },
+  "криво": {
+    word: "Криво",
+    definition: "Неправильно, плохо, некачественно. Что-то сделано не так, как нужно.",
+    shortTranslation: "плохо",
+    examples: [
+      "Эта программа работает криво",
+      "Он криво перевел текст"
+    ],
+    category: "Общение"
+  },
+  "лол": {
+    word: "Лол",
+    definition: "Смешно, потешно. Сокращение от 'LOL' (Laughing Out Loud) - громко смеюсь.",
+    shortTranslation: "смешно",
+    examples: [
+      "Лол, это очень смешно!",
+      "Посмотри это видео, там лол"
+    ],
+    category: "Интернет"
+  },
+  "баян": {
+    word: "Баян",
+    definition: "Старая шутка или новость, которую все уже видели. Надоевшая, избитая история.",
+    shortTranslation: "боян",
+    examples: [
+      "Это баян, эту шутку все знают",
+      "Опять баян публикуешь?"
+    ],
+    category: "Интернет"
+  },
+  "рофлить": {
+    word: "Рофлить",
+    definition: "Смеяться, шутить, веселиться. От 'ROFL' (Rolling On Floor Laughing).",
+    shortTranslation: "смеяться",
+    examples: [
+      "Мы весь вечер рофлили над мемами",
+      "Перестань рофлить, это серьезно"
+    ],
+    category: "Интернет"
+  },
+  "краш": {
+    word: "Краш",
+    definition: "Объект симпатии, влюбленности. Человек, который очень нравится.",
+    shortTranslation: "симпатия",
+    examples: [
+      "Он мой краш уже полгода",
+      "Познакомь меня со своим крашем"
+    ],
+    category: "Отношения"
+  },
+  "флексить": {
+    word: "Флексить",
+    definition: "Хвастаться, выпендриваться, показывать свои достижения или вещи.",
+    shortTranslation: "хвастаться",
+    examples: [
+      "Он постоянно флексит новыми кроссовками",
+      "Хватит флексить своими оценками"
+    ],
+    category: "Стиль жизни"
+  },
+  "флекс": {
+    word: "Флекс",
+    definition: "Хвастовство, демонстрация своих достижений, вещей или статуса. От английского 'flex'.",
+    shortTranslation: "хвастовство",
+    examples: [
+      "Это просто флекс, ему нечем больше похвастаться",
+      "Купил новую машину для флекса"
+    ],
+    category: "Стиль жизни"
+  },
+  "вайб": {
+    word: "Вайб",
+    definition: "Атмосфера, настроение, общее ощущение от места, события или человека. От английского 'vibe'.",
+    shortTranslation: "атмосфера",
+    examples: [
+      "Здесь классный вайб",
+      "У этой песни летний вайб"
+    ],
+    category: "Стиль жизни"
+  },
+  "кринж": {
+    word: "Кринж",
+    definition: "Что-то очень неловкое, стыдное, вызывающее дискомфорт. Испанский стыд.",
+    shortTranslation: "неловко",
+    examples: [
+      "Это такой кринж, я не могу на это смотреть",
+      "Его поведение было полным кринжем"
+    ],
+    category: "Эмоции"
+  },
+  "токсик": {
+    word: "Токсик",
+    definition: "Токсичный человек, неприятный в общении, распространяющий негатив.",
+    shortTranslation: "токсичный",
+    examples: [
+      "Он полный токсик, лучше с ним не общаться",
+      "В этой игре слишком много токсиков"
+    ],
+    category: "Общение"
+  },
+  "хейтить": {
+    word: "Хейтить",
+    definition: "Ненавидеть, критиковать, испытывать неприязнь. От английского 'hate'.",
+    shortTranslation: "ненавидеть",
+    examples: [
+      "Зачем ты его хейтишь?",
+      "Хейтеры всегда будут хейтить"
+    ],
+    category: "Общение"
+  },
+  "агриться": {
+    word: "Агриться",
+    definition: "Злиться, раздражаться, быть в плохом настроении. От английского 'aggressive'.",
+    shortTranslation: "злиться",
+    examples: [
+      "Не агрись, это всего лишь игра",
+      "Он всегда агрится по мелочам"
+    ],
+    category: "Эмоции"
+  },
+  "зумер": {
+    word: "Зумер",
+    definition: "Представитель поколения Z, рожденный в конце 1990-х - начале 2010-х.",
+    shortTranslation: "молодежь",
+    examples: [
+      "Типичный зумер, постоянно в телефоне",
+      "Зумеры не знают мир без интернета"
+    ],
+    category: "Общение"
+  },
+  "бумер": {
+    word: "Бумер",
+    definition: "Человек старшего поколения, не понимающий современных технологий и трендов.",
+    shortTranslation: "старик",
+    examples: [
+      "Ок, бумер, как скажешь",
+      "Не будь бумером, попробуй разобраться"
+    ],
+    category: "Общение"
+  },
+  "изи": {
+    word: "Изи",
+    definition: "Легко, просто, без усилий. От английского 'easy'.",
+    shortTranslation: "легко",
+    examples: [
+      "Это задание изи, справлюсь за минуту",
+      "Изи катка, мы выиграли"
+    ],
+    category: "Игры"
+  },
+  "го": {
+    word: "Го",
+    definition: "Пойдем, давай, приглашение к действию. От английского 'go'.",
+    shortTranslation: "пойдем",
+    examples: [
+      "Го играть в футбол",
+      "Го в кино сегодня вечером"
+    ],
+    category: "Общение"
+  },
+  "рандом": {
+    word: "Рандом",
+    definition: "Случайность, что-то непредсказуемое. От английского 'random'.",
+    shortTranslation: "случайность",
+    examples: [
+      "Это был полный рандом",
+      "Выбери рандомную песню"
+    ],
+    category: "Игры"
+  },
+  "спойлер": {
+    word: "Спойлер",
+    definition: "Информация, раскрывающая сюжет фильма, книги или игры заранее.",
+    shortTranslation: "раскрытие",
+    examples: [
+      "Не говори спойлеры, я еще не смотрел!",
+      "Ты мне весь фильм заспойлерил"
+    ],
+    category: "Медиа"
+  },
+  "стримить": {
+    word: "Стримить",
+    definition: "Вести прямую трансляцию в интернете.",
+    shortTranslation: "транслировать",
+    examples: [
+      "Сегодня буду стримить игру",
+      "Он каждый день стримит на Твиче"
+    ],
+    category: "Медиа"
+  },
+  "донатить": {
+    word: "Донатить",
+    definition: "Отправлять денежные пожертвования стримеру или создателю контента.",
+    shortTranslation: "жертвовать",
+    examples: [
+      "Я задонатил своему любимому стримеру",
+      "Спасибо всем, кто донатит!"
+    ],
+    category: "Медиа"
+  },
+  "пранк": {
+    word: "Пранк",
+    definition: "Розыгрыш, шутка над кем-то. От английского 'prank'.",
+    shortTranslation: "розыгрыш",
+    examples: [
+      "Это был эпичный пранк над другом",
+      "Давай заснимем пранк для ютуба"
+    ],
+    category: "Медиа"
+  },
+  "троллить": {
+    word: "Троллить",
+    definition: "Специально провоцировать, дразнить или обманывать кого-то ради смеха.",
+    shortTranslation: "провоцировать",
+    examples: [
+      "Он любит троллить людей в комментариях",
+      "Перестань меня троллить!"
+    ],
+    category: "Общение"
+  },
+  "шипперить": {
+    word: "Шипперить",
+    definition: "Желать, чтобы два человека были вместе, поддерживать романтическую пару.",
+    shortTranslation: "сводить",
+    examples: [
+      "Я их шипперю с первого сезона",
+      "Все шипперят этих персонажей"
+    ],
+    category: "Отношения"
+  },
+  "сасный": {
+    word: "Сасный",
+    definition: "Очень красивый, привлекательный. Искаженное 'сексуальный'.",
+    shortTranslation: "красивый",
+    examples: [
+      "Он такой сасный парень",
+      "Сасная фотка, выложи в инсту"
+    ],
+    category: "Стиль жизни"
+  },
+  "мем": {
+    word: "Мем",
+    definition: "Вирусная шутка, изображение или видео, распространяемое в интернете.",
+    shortTranslation: "шутка",
+    examples: [
+      "Этот мем уже все видели",
+      "Он постоянно присылает смешные мемы"
+    ],
+    category: "Интернет"
+  },
+  "хайп": {
+    word: "Хайп",
+    definition: "Ажиотаж, повышенное внимание, шумиха вокруг чего-либо.",
+    shortTranslation: "ажиотаж",
+    examples: [
+      "Вокруг нового фильма огромный хайп",
+      "Зачем поддерживать этот хайп?"
+    ],
+    category: "Медиа"
+  },
+  "годнота": {
+    word: "Годнота",
+    definition: "Качественный, хороший контент или продукт.",
+    shortTranslation: "качество",
+    examples: [
+      "Этот фильм - настоящая годнота",
+      "Где найти такую годноту?"
+    ],
+    category: "Стиль жизни"
+  },
+  "дроп": {
+    word: "Дроп",
+    definition: "Выпуск новой коллекции, релиз товара или контента.",
+    shortTranslation: "выпуск",
+    examples: [
+      "Завтра дроп новых кроссовок",
+      "Не пропусти дроп новой коллекции"
+    ],
+    category: "Стиль жизни"
+  },
+  "гайд": {
+    word: "Гайд",
+    definition: "Руководство, инструкция, объяснение как что-то сделать.",
+    shortTranslation: "инструкция",
+    examples: [
+      "Посмотри гайд на YouTube",
+      "Мне нужен гайд по этой игре"
+    ],
+    category: "Игры"
+  },
+  "лейм": {
+    word: "Лейм",
+    definition: "Слабый, неумелый, скучный. Человек или что-то неинтересное.",
+    shortTranslation: "слабак",
+    examples: [
+      "Чувак, ты лейм",
+      "Эта игра лейм, давай в другую"
+    ],
+    category: "Игры"
+  },
+  "чувак": {
+    word: "Чувак",
+    definition: "Парень, человек, друг. Неформальное обращение.",
+    shortTranslation: "парень",
+    examples: [
+      "Чувак, как дела?",
+      "Этот чувак классный"
+    ],
+    category: "Общение"
+  },
+  "имба": {
+    word: "Имба",
+    definition: "Несбалансированно сильный, слишком мощный. От 'imbalanced'.",
+    shortTranslation: "мощный",
+    examples: [
+      "Это оружие имба",
+      "Имбовый персонаж"
+    ],
+    category: "Игры"
+  },
+  "нуб": {
+    word: "Нуб",
+    definition: "Новичок, неопытный игрок. От 'newbie'.",
+    shortTranslation: "новичок",
+    examples: [
+      "Ты играешь как нуб",
+      "Нубы не понимают механик"
+    ],
+    category: "Игры"
+  },
+  "про": {
+    word: "Про",
+    definition: "Профессионал, опытный игрок. От 'professional'.",
+    shortTranslation: "профи",
+    examples: [
+      "Он про-игрок",
+      "Играет как про"
+    ],
+    category: "Игры"
+  },
+};
+
+// Popular words list
+const popularWords = [
+  "чилить", "рофлить", "флексить", "вайб", "кринж", 
+  "токсик", "изи", "го", "краш", "хайп"
+];
+
+// Categories
+const categories = [
+  "Все",
+  "Интернет",
+  "Игры",
+  "Эмоции",
+  "Общение",
+  "Стиль жизни",
+  "Медиа",
+  "Отношения"
+];
+
+// ========================
+// HELPER FUNCTIONS
+// ========================
+
+// Морфологический анализ слова
+interface WordForm {
+  base: string;
+  prefix?: string;
+  suffix?: string;
+  ending?: string;
+  isVerb?: boolean;
+  isNoun?: boolean;
+  isAdjective?: boolean;
+}
+
+// Определить форму слова
+function analyzeWordForm(word: string): WordForm {
+  const lowerWord = word.toLowerCase();
+  const result: WordForm = { base: lowerWord };
+  
+  // Определяем приставки
+  const prefixes = ['по', 'за', 'от', 'про', 'при', 'пере', 'на', 'вы', 'раз', 'с'];
+  for (const prefix of prefixes) {
+    if (lowerWord.startsWith(prefix) && lowerWord.length > prefix.length + 2) {
+      result.prefix = prefix;
+      const withoutPrefix = lowerWord.substring(prefix.length);
+      // Проверяем, существует ли базовая форма без приставки
+      if (wordFormsMap[withoutPrefix] || dictionary[withoutPrefix]) {
+        result.base = withoutPrefix;
+        break;
+      }
+    }
+  }
+  
+  // Определяем форму глагола
+  const verbEndings = {
+    infinitive: ['ть', 'ти', 'чь'],
+    pastMale: ['л'],
+    pastFemale: ['ла'],
+    pastNeuter: ['ло'],
+    pastPlural: ['ли'],
+    present1sg: ['у', 'ю'],
+    present2sg: ['ешь', 'ишь', 'ёшь'],
+    present3sg: ['ет', 'ит', 'ёт'],
+    present1pl: ['ем', 'им', 'ём'],
+    present2pl: ['ете', 'ите', 'ёте'],
+    present3pl: ['ут', 'ют', 'ат', 'ят'],
+    imperative: ['и', 'й'],
+    imperativePlural: ['ите', 'йте']
+  };
+  
+  const baseWord = result.prefix ? result.base : lowerWord;
+  
+  // Проверяем окончания глаголов
+  for (const [form, endings] of Object.entries(verbEndings)) {
+    for (const ending of endings) {
+      if (baseWord.endsWith(ending) && baseWord.length > ending.length + 1) {
+        result.ending = ending;
+        result.isVerb = true;
+        result.suffix = form;
+        return result;
+      }
+    }
+  }
+  
+  // Определяем форму существительного/прилагательного
+  const nounEndings = ['а', 'у', 'ом', 'е', 'ы', 'ов', 'ам', 'ами', 'ах', 'ей', 'ёй', 'ий', 'ая', 'ое', 'ые', 'его', 'ого', 'ому', 'ему'];
+  for (const ending of nounEndings) {
+    if (baseWord.endsWith(ending) && baseWord.length > ending.length + 2) {
+      result.ending = ending;
+      result.isNoun = true;
+      return result;
+    }
+  }
+  
+  return result;
+}
+
+// Применить морфологию к базовому слову
+function applyWordForm(baseWord: string, form: WordForm, originalWord: string): string {
+  let result = baseWord.toLowerCase();
+  
+  // Если исходное слово с большой буквы, сохраняем это
+  const shouldCapitalize = originalWord[0] === originalWord[0].toUpperCase();
+  
+  // Применяем приставку
+  if (form.prefix) {
+    result = form.prefix + result;
+  }
+  
+  // Для глаголов применяем окончания
+  if (form.isVerb && form.ending && form.suffix) {
+    // Убираем базовое окончание инфинитива
+    if (result.endsWith('ть') || result.endsWith('ти')) {
+      result = result.slice(0, -2);
+    } else if (result.endsWith('чь')) {
+      result = result.slice(0, -2);
+    }
+    
+    // Применяем нужное окончание
+    switch (form.suffix) {
+      case 'infinitive':
+        result = result + 'ть';
+        break;
+      case 'pastMale':
+        result = result + 'л';
+        break;
+      case 'pastFemale':
+        result = result + 'ла';
+        break;
+      case 'pastNeuter':
+        result = result + 'ло';
+        break;
+      case 'pastPlural':
+        result = result + 'ли';
+        break;
+      case 'present1sg':
+        // Удаляем последнюю букву основы для -ю/-у
+        if (result.endsWith('и')) {
+          result = result.slice(0, -1) + 'ю';
+        } else {
+          result = result + 'ю';
+        }
+        break;
+      case 'present2sg':
+        result = result + 'ешь';
+        break;
+      case 'present3sg':
+        result = result + 'ет';
+        break;
+      case 'present1pl':
+        result = result + 'ем';
+        break;
+      case 'present2pl':
+        result = result + 'ете';
+        break;
+      case 'present3pl':
+        result = result + 'ют';
+        break;
+      case 'imperative':
+        result = result + 'и';
+        break;
+      case 'imperativePlural':
+        result = result + 'ите';
+        break;
+    }
+  }
+  
+  // Для существительных/прилагательных сохраняем окончание
+  if (form.isNoun && form.ending) {
+    // Убираем базовое окончание если есть
+    const baseEndings = ['', 'а', 'о', 'е', 'я'];
+    for (const ending of baseEndings) {
+      if (result.endsWith(ending) && ending.length > 0) {
+        result = result.slice(0, -ending.length);
+        break;
+      }
+    }
+    result = result + form.ending;
+  }
+  
+  // Применяем капитализацию
+  if (shouldCapitalize) {
+    result = result.charAt(0).toUpperCase() + result.slice(1);
+  }
+  
+  return result;
+}
+
+// Normalize word to base form
+function normalizeWord(word: string): string {
+  const lowerWord = word.toLowerCase().trim();
+  return wordFormsMap[lowerWord] || lowerWord;
+}
+
+// Translate a single word with morphology
+function translateWord(word: string, mode: string): DictionaryEntry | null {
+  const normalizedWord = normalizeWord(word);
+  
+  if (mode === "slangToRussian") {
+    return dictionary[normalizedWord] || null;
+  } else {
+    // Russian to Slang
+    const slangWord = russianToSlangMap[normalizedWord];
+    if (slangWord && dictionary[slangWord]) {
+      const entry = dictionary[slangWord];
+      return {
+        ...entry,
+        word: entry.word,
+        definition: `Сленговый вариант слова "${word}"`,
+        shortTranslation: slangWord,
+      };
+    }
+  }
+  
+  return null;
+}
+
+// Translate word with morphology preservation
+function translateWordWithMorphology(word: string, mode: string): string | null {
+  const cleanWord = word.toLowerCase().trim();
+  const wordForm = analyzeWordForm(cleanWord);
+  const normalizedWord = normalizeWord(cleanWord);
+  
+  if (mode === "slangToRussian") {
+    const entry = dictionary[normalizedWord];
+    if (entry && entry.shortTranslation) {
+      return applyWordForm(entry.shortTranslation, wordForm, word);
+    }
+  } else {
+    // Russian to Slang
+    const slangWord = russianToSlangMap[normalizedWord];
+    if (slangWord) {
+      return applyWordForm(slangWord, wordForm, word);
+    }
+  }
+  
+  return null;
+}
+
+// Translate sentence with morphology
+function translateSentence(text: string, mode: string): any {
+  const words = text.split(/\s+/);
+  let translatedWords: string[] = [];
+  const explanations: Array<{ word: string; explanation: string }> = [];
+  
+  for (const word of words) {
+    // Сохраняем пунктуацию
+    const punctuation = word.match(/[.,!?;:]+$/)?.[0] || "";
+    const cleanWord = word.replace(/[.,!?;:]+$/, "");
+    
+    if (!cleanWord) {
+      translatedWords.push(word);
+      continue;
+    }
+    
+    // Пытаемся перевести с сохранением морфологии
+    const translatedWord = translateWordWithMorphology(cleanWord, mode);
+    
+    if (translatedWord) {
+      translatedWords.push(translatedWord + punctuation);
+      
+      // Добавляем объяснение
+      const normalizedWord = normalizeWord(cleanWord);
+      if (mode === "slangToRussian") {
+        const entry = dictionary[normalizedWord];
+        if (entry) {
+          explanations.push({
+            word: cleanWord,
+            explanation: entry.definition
+          });
+        }
+      } else {
+        const slangWord = russianToSlangMap[normalizedWord];
+        if (slangWord) {
+          const entry = dictionary[slangWord];
+          if (entry) {
+            explanations.push({
+              word: slangWord,
+              explanation: entry.definition
+            });
+          }
+        }
+      }
+    } else {
+      translatedWords.push(word);
+    }
+  }
+  
+  return {
+    word: text,
+    definition: translatedWords.join(" "),
+    shortTranslation: null,
+    examples: [],
+    category: "Перевод",
+    explanations: explanations.length > 0 ? explanations : undefined
+  };
+}
+
+// ========================
+// API ROUTES
+// ========================
+
+// Health check endpoint
+app.get("/make-server-6f7662b1/health", (c) => {
+  return c.json({ status: "ok", message: "Slang Translator API is running" });
+});
+
+// Get dictionary
+app.get("/make-server-6f7662b1/dictionary", (c) => {
+  try {
+    return c.json({
+      success: true,
+      dictionary,
+      wordFormsMap,
+      russianToSlangMap,
+      categories,
+      popularWords
+    });
+  } catch (error) {
+    console.error("Error fetching dictionary:", error);
+    return c.json({ success: false, error: "Failed to fetch dictionary" }, 500);
+  }
+});
+
+// Translate text
+app.post("/make-server-6f7662b1/translate", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { text, mode } = body;
+    
+    if (!text || !mode) {
+      return c.json({ 
+        success: false, 
+        error: "Missing required fields: text and mode" 
+      }, 400);
+    }
+    
+    const trimmedText = text.trim();
+    const isSingleWord = !trimmedText.includes(" ");
+    
+    let result;
+    if (isSingleWord) {
+      result = translateWord(trimmedText, mode);
+    } else {
+      result = translateSentence(trimmedText, mode);
+    }
+    
+    if (!result) {
+      return c.json({
+        success: false,
+        error: "Translation not found"
+      }, 404);
+    }
+    
+    // Update statistics
+    try {
+      const statsKey = "stats:translations";
+      const currentStats = await kv.get(statsKey) || { count: 0, lastUpdate: Date.now() };
+      await kv.set(statsKey, { 
+        count: currentStats.count + 1, 
+        lastUpdate: Date.now() 
+      });
+    } catch (error) {
+      console.error("Error updating stats:", error);
+    }
+    
+    return c.json({
+      success: true,
+      translation: result
+    });
+  } catch (error) {
+    console.error("Error translating text:", error);
+    return c.json({ 
+      success: false, 
+      error: "Translation failed: " + error.message 
+    }, 500);
+  }
+});
+
+// Get popular words
+app.get("/make-server-6f7662b1/popular", (c) => {
+  try {
+    const popularEntries = popularWords.map(word => ({
+      word,
+      ...dictionary[word]
+    })).filter(Boolean);
+    
+    return c.json({
+      success: true,
+      words: popularEntries
+    });
+  } catch (error) {
+    console.error("Error fetching popular words:", error);
+    return c.json({ success: false, error: "Failed to fetch popular words" }, 500);
+  }
+});
+
+// Search/autocomplete
+app.get("/make-server-6f7662b1/search", (c) => {
+  try {
+    const query = c.req.query("q")?.toLowerCase() || "";
+    const mode = c.req.query("mode") || "slangToRussian";
+    const limit = parseInt(c.req.query("limit") || "10");
+    
+    if (!query) {
+      return c.json({ success: true, results: [] });
+    }
+    
+    let results: string[] = [];
+    
+    if (mode === "slangToRussian") {
+      // Search in slang words
+      results = Object.keys(dictionary)
+        .filter(word => word.toLowerCase().includes(query))
+        .slice(0, limit);
+    } else {
+      // Search in Russian words
+      results = Object.keys(russianToSlangMap)
+        .filter(word => word.toLowerCase().includes(query))
+        .slice(0, limit);
+    }
+    
+    return c.json({
+      success: true,
+      results
+    });
+  } catch (error) {
+    console.error("Error searching:", error);
+    return c.json({ success: false, error: "Search failed" }, 500);
+  }
+});
+
+// Get/Set favorites
+app.get("/make-server-6f7662b1/favorites/:userId", async (c) => {
+  try {
+    const userId = c.req.param("userId");
+    const favorites = await kv.get(`favorites:${userId}`) || [];
+    
+    return c.json({
+      success: true,
+      favorites
+    });
+  } catch (error) {
+    console.error("Error fetching favorites:", error);
+    return c.json({ success: false, error: "Failed to fetch favorites" }, 500);
+  }
+});
+
+app.post("/make-server-6f7662b1/favorites/:userId", async (c) => {
+  try {
+    const userId = c.req.param("userId");
+    const body = await c.req.json();
+    const { favorites } = body;
+    
+    await kv.set(`favorites:${userId}`, favorites);
+    
+    return c.json({
+      success: true,
+      message: "Favorites updated"
+    });
+  } catch (error) {
+    console.error("Error updating favorites:", error);
+    return c.json({ success: false, error: "Failed to update favorites" }, 500);
+  }
+});
+
+// Get/Set history
+app.get("/make-server-6f7662b1/history/:userId", async (c) => {
+  try {
+    const userId = c.req.param("userId");
+    const history = await kv.get(`history:${userId}`) || [];
+    
+    return c.json({
+      success: true,
+      history
+    });
+  } catch (error) {
+    console.error("Error fetching history:", error);
+    return c.json({ success: false, error: "Failed to fetch history" }, 500);
+  }
+});
+
+app.post("/make-server-6f7662b1/history/:userId", async (c) => {
+  try {
+    const userId = c.req.param("userId");
+    const body = await c.req.json();
+    const { history } = body;
+    
+    await kv.set(`history:${userId}`, history);
+    
+    return c.json({
+      success: true,
+      message: "History updated"
+    });
+  } catch (error) {
+    console.error("Error updating history:", error);
+    return c.json({ success: false, error: "Failed to update history" }, 500);
+  }
+});
+
+app.delete("/make-server-6f7662b1/history/:userId", async (c) => {
+  try {
+    const userId = c.req.param("userId");
+    await kv.del(`history:${userId}`);
+    
+    return c.json({
+      success: true,
+      message: "History cleared"
+    });
+  } catch (error) {
+    console.error("Error clearing history:", error);
+    return c.json({ success: false, error: "Failed to clear history" }, 500);
+  }
+});
+
+// Get stats
+app.get("/make-server-6f7662b1/stats", async (c) => {
+  try {
+    const stats = await kv.get("stats:translations") || { count: 0, lastUpdate: Date.now() };
+    
+    return c.json({
+      success: true,
+      stats: {
+        totalTranslations: stats.count,
+        totalWords: Object.keys(dictionary).length,
+        categories: categories.length - 1, // Exclude "Все"
+        lastUpdate: stats.lastUpdate
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching stats:", error);
+    return c.json({ success: false, error: "Failed to fetch stats" }, 500);
+  }
+});
+
+// Catch-all 404
+app.all("*", (c) => {
+  return c.json({ error: "Not Found" }, 404);
+});
+
+Deno.serve(app.fetch);

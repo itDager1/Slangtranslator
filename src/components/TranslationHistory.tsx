@@ -57,7 +57,7 @@ export function TranslationHistory({
       </SheetTrigger>
       <SheetContent side="right" className="w-full sm:w-[400px]">
         <SheetHeader className="mb-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <SheetTitle>История переводов</SheetTitle>
             {history.length > 0 && (
               <Button 

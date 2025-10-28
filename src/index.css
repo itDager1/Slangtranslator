@@ -43,11 +43,13 @@
   :root, :host {
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --color-red-400: oklch(.704 .191 22.216);
     --color-amber-50: oklch(.987 .022 95.277);
     --color-amber-500: oklch(.769 .188 70.08);
     --color-amber-600: oklch(.666 .179 58.318);
     --color-yellow-600: oklch(.681 .162 75.834);
     --color-yellow-700: oklch(.554 .135 66.442);
+    --color-green-400: oklch(.792 .209 151.711);
     --color-purple-50: oklch(.977 .014 308.299);
     --color-purple-100: oklch(.946 .033 307.174);
     --color-purple-200: oklch(.902 .063 306.703);
@@ -87,6 +89,7 @@
     --radius-xs: .125rem;
     --radius-2xl: 1rem;
     --ease-in-out: cubic-bezier(.4, 0, .2, 1);
+    --animate-spin: spin 1s linear infinite;
     --default-transition-duration: .15s;
     --default-transition-timing-function: cubic-bezier(.4, 0, .2, 1);
     --default-font-family: var(--font-sans);
@@ -624,10 +627,6 @@
     width: calc(var(--spacing) * 6);
   }
 
-  .w-8 {
-    width: calc(var(--spacing) * 8);
-  }
-
   .w-9 {
     width: calc(var(--spacing) * 9);
   }
@@ -636,8 +635,8 @@
     width: calc(var(--spacing) * 12);
   }
 
-  .w-48 {
-    width: calc(var(--spacing) * 48);
+  .w-36 {
+    width: calc(var(--spacing) * 36);
   }
 
   .w-full {
@@ -670,6 +669,10 @@
 
   .flex-shrink-0, .shrink-0 {
     flex-shrink: 0;
+  }
+
+  .animate-spin {
+    animation: var(--animate-spin);
   }
 
   .cursor-pointer {
@@ -996,10 +999,6 @@
     padding-top: calc(var(--spacing) * 4);
   }
 
-  .pt-12 {
-    padding-top: calc(var(--spacing) * 12);
-  }
-
   .pr-4 {
     padding-right: calc(var(--spacing) * 4);
   }
@@ -1012,8 +1011,8 @@
     padding-right: calc(var(--spacing) * 20);
   }
 
-  .pb-8 {
-    padding-bottom: calc(var(--spacing) * 8);
+  .pb-4 {
+    padding-bottom: calc(var(--spacing) * 4);
   }
 
   .text-center {
@@ -1147,6 +1146,10 @@
     color: var(--color-gray-900);
   }
 
+  .text-green-400 {
+    color: var(--color-green-400);
+  }
+
   .text-muted-foreground {
     color: var(--muted-foreground);
   }
@@ -1165,6 +1168,10 @@
 
   .text-purple-700 {
     color: var(--color-purple-700);
+  }
+
+  .text-red-400 {
+    color: var(--color-red-400);
   }
 
   .text-secondary-foreground {
@@ -1974,6 +1981,12 @@ html {
 @property --tw-ease {
   syntax: "*";
   inherits: false
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes enter {

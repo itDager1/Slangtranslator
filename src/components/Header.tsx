@@ -7,7 +7,7 @@ interface HeaderProps {
 
 export function Header({ translationMode }: HeaderProps) {
   return (
-    <div className="text-center max-w-4xl mx-auto px-4 pt-12 pb-8">
+    <div className="text-center max-w-4xl mx-auto px-4 pt-4 pb-4">
 
       <h1 className="mb-4 text-black font-['Lora'] text-4xl">
       </h1>
