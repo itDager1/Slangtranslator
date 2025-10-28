@@ -15,8 +15,8 @@ export function Header({ translationMode }: HeaderProps) {
       
       {translationMode === "slangToRussian" ? (
         <>
-          <h1 className="mb-4">
-            Поймите русский <span className="text-purple-600">интернет-сленг</span>
+          <h1 className="mb-4 text-black font-['Roboto'] text-3xl">
+            Поймите русский <span className="text-black">интернет-сленг</span>
           </h1>
         </>
       ) : (

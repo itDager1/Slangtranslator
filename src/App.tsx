@@ -225,7 +225,7 @@ const wordFormsMap: Record<string, string> = {
   "вайбе": "вайб",
   "вайбы": "вайб",
   "вайбов": "вайб",
-  "вайбам": "вайб",
+  "��айбам": "вайб",
   "вайбами": "вайб",
   "вайбах": "вайб",
   
@@ -744,7 +744,7 @@ const wordFormsMap: Record<string, string> = {
   
   // Дополнительные формы для "нравится"
   "нравился": "нравится",
-  "нравилась": "нравится",
+  "нравилась": "��равится",
   "нравилось": "нравится",
   "нравились": "нравится",
   "нравлюсь": "нравится",
@@ -1728,7 +1728,7 @@ export default function App() {
           {/* Language selector header */}
           <div className="mb-4 flex items-center justify-center gap-4">
             <div className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between w-48">
-              <span className="text-gray-300">{translationMode === "slangToRussian" ? "Сленг" : "Русский"}</span>
+              <span className="text-[rgb(255,255,255)] font-['Lora'] uppercase font-[Mako] font-normal text-[16px]">{translationMode === "slangToRussian" ? "Сленг" : "Русский"}</span>
               <ChevronDown className="w-5 h-5 text-gray-400" />
             </div>
             

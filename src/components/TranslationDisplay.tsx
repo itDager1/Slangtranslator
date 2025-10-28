@@ -18,7 +18,7 @@ export function TranslationDisplay({ selectedWord, translation, translationMode 
   if (!selectedWord || !translation) {
     return (
       <div className="w-full bg-gray-800 rounded-xl p-6 min-h-[280px] flex flex-col">
-        <div className="text-gray-400">Перевод</div>
+        <div className="text-[rgb(255,255,255)] text-lg">Перевод</div>
       </div>
     );
   }

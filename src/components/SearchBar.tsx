@@ -29,7 +29,7 @@ export function SearchBar({ value, onChange, onSearch, translationMode }: Search
               onSearch(value.trim());
             }
           }}
-          className="w-full flex-1 bg-transparent border-none outline-none text-white placeholder:text-gray-400 resize-none"
+          className="w-full flex-1 bg-transparent border-none outline-none text-[rgb(255,255,255)] placeholder:text-white placeholder:text-lg resize-none text-[16px] font-normal not-italic no-underline"
         />
       </div>
     </div>

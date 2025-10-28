@@ -56,6 +56,7 @@
     --color-gray-700: oklch(.373 .034 259.733);
     --color-gray-800: oklch(.278 .033 256.848);
     --color-gray-900: oklch(.21 .034 264.665);
+    --color-black: #000;
     --color-white: #fff;
     --spacing: .25rem;
     --container-4xl: 56rem;
@@ -65,8 +66,11 @@
     --text-sm--line-height: calc(1.25 / .875);
     --text-base: 1rem;
     --text-lg: 1.125rem;
+    --text-lg--line-height: calc(1.75 / 1.125);
     --text-xl: 1.25rem;
     --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-3xl--line-height: calc(2.25 / 1.875);
     --font-weight-normal: 400;
     --font-weight-medium: 500;
     --radius-2xl: 1rem;
@@ -754,9 +758,35 @@
     text-align: left;
   }
 
+  .font-\[\'Lora\'\] {
+    font-family: Lora;
+  }
+
+  .font-\[\'Roboto\'\] {
+    font-family: Roboto;
+  }
+
+  .font-\[Mako\] {
+    font-family: Mako;
+  }
+
+  .text-3xl {
+    font-size: var(--text-3xl);
+    line-height: var(--tw-leading, var(--text-3xl--line-height));
+  }
+
+  .text-lg {
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
+  }
+
   .text-sm {
     font-size: var(--text-sm);
     line-height: var(--tw-leading, var(--text-sm--line-height));
+  }
+
+  .text-\[16px\] {
+    font-size: 16px;
   }
 
   .font-medium {
@@ -764,8 +794,21 @@
     font-weight: var(--font-weight-medium);
   }
 
+  .font-normal {
+    --tw-font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-normal);
+  }
+
   .whitespace-nowrap {
     white-space: nowrap;
+  }
+
+  .text-\[rgb\(255\,255\,255\)\] {
+    color: #fff;
+  }
+
+  .text-black {
+    color: var(--color-black);
   }
 
   .text-foreground {
@@ -816,8 +859,20 @@
     color: var(--color-white);
   }
 
+  .uppercase {
+    text-transform: uppercase;
+  }
+
   .italic {
     font-style: italic;
+  }
+
+  .not-italic {
+    font-style: normal;
+  }
+
+  .no-underline {
+    text-decoration-line: none;
   }
 
   .underline-offset-4 {
@@ -850,8 +905,13 @@
     outline-style: none;
   }
 
-  .placeholder\:text-gray-400::placeholder {
-    color: var(--color-gray-400);
+  .placeholder\:text-lg::placeholder {
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
+  }
+
+  .placeholder\:text-white::placeholder {
+    color: var(--color-white);
   }
 
   @media (hover: hover) {
