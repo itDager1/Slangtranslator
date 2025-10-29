@@ -16,7 +16,7 @@ export function Navbar({ history, onClearHistory, onSelectEntry }: NavbarProps) 
             {/* Left speech bubble (Slang) */}
             <circle cx="10" cy="12" r="6" fill="#FFD700" />
             <path d="M 7 16 L 6 19 L 9 17 Z" fill="#FFD700" />
-            <text x="10" y="14.5" textAnchor="middle" fill="#FFF" fontSize="7" fontWeight="bold">А</text>
+            <text x="10" y="15" textAnchor="middle" fill="#FFF" fontSize="9.5" fontWeight="bold">А</text>
             
             {/* Right speech bubble (Russian) */}
             <circle cx="22" cy="20" r="6" fill="#FFC107" />
