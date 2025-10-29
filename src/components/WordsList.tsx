@@ -47,7 +47,7 @@ export function WordsList({ category, onSelectWord }: WordsListProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-4">
-        <Book className="w-5 h-5 text-yellow-600" />
+        <Book className="w-5 h-5 text-[#E19E2F]" />
         <h2 className="text-gray-700">
           Словарь: {category} <span className="text-gray-400">({words.length} слов)</span>
         </h2>
@@ -60,12 +60,12 @@ export function WordsList({ category, onSelectWord }: WordsListProps) {
           return (
             <Card
               key={entry.word}
-              className="p-4 hover:shadow-md hover:border-yellow-300 transition-all cursor-pointer group"
+              className="p-4 hover:shadow-md hover:border-[#E19E2F]/50 transition-all cursor-pointer group"
               onClick={() => handleWordClick(entry.word)}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1">
-                  <h3 className="text-yellow-600 group-hover:text-yellow-600 transition-colors mb-1">
+                  <h3 className="text-[#E19E2F] group-hover:text-[#E19E2F] transition-colors mb-1">
                     {entry.word}
                   </h3>
                   
@@ -85,7 +85,7 @@ export function WordsList({ category, onSelectWord }: WordsListProps) {
                         <div className="space-y-2">
                           <p className="text-xs text-gray-500">Примеры:</p>
                           {entry.examples.map((example, idx) => (
-                            <p key={idx} className="text-xs text-gray-600 italic pl-2 border-l-2 border-yellow-200">
+                            <p key={idx} className="text-xs text-gray-600 italic pl-2 border-l-2 border-[#E19E2F]/30">
                               {example}
                             </p>
                           ))}

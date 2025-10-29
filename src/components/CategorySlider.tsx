@@ -44,7 +44,7 @@ export function CategorySlider({ selectedCategory, onSelectCategory }: CategoryS
             onClick={() => onSelectCategory("")}
             className={`shrink-0 rounded-lg ${
               selectedCategory === ""
-                ? "bg-yellow-600 hover:bg-yellow-700 text-white"
+                ? "bg-[#E19E2F] hover:bg-[#C98A26] text-white"
                 : "bg-white hover:bg-gray-50 border-gray-200"
             }`}
           >
@@ -57,7 +57,7 @@ export function CategorySlider({ selectedCategory, onSelectCategory }: CategoryS
               onClick={() => onSelectCategory(category)}
               className={`shrink-0 rounded-lg ${
                 selectedCategory === category
-                  ? "bg-yellow-600 hover:bg-yellow-700 text-white"
+                  ? "bg-[#E19E2F] hover:bg-[#C98A26] text-white"
                   : "bg-white hover:bg-gray-50 border-gray-200"
               }`}
             >

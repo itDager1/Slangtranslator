@@ -427,7 +427,7 @@ const wordFormsMap: Record<string, string> = {
   "шипперящая": "шипперить",
   "шипперящее": "шипперить",
   "шипперящие": "шипперить",
-  // Причастия прошедшего времени
+  // Причастия прошедшего вре��ени
   "шипперивший": "шипперить",
   "шипперившая": "шипперить",
   "шипперившее": "шипперить",
@@ -895,7 +895,7 @@ const wordFormsMap: Record<string, string> = {
   "профессионалы": "профессионал",
   "профессионалов": "профессионал",
   "профессионалам": "профессионал",
-  "профессионалами": "профессионал",
+  "профессиона��ами": "профессионал",
   "профессионалах": "профессионал",
   
   // Формы "задержка"
@@ -2079,6 +2079,16 @@ const dictionary: Record<string, DictionaryEntry> = {
     ],
     category: "Общение"
   },
+  "сорри": {
+    word: "Сорри",
+    definition: "Извинение, просьба о прощении. От английского 'sorry' - извини, прости.",
+    shortTranslation: "извини",
+    examples: [
+      "Сорри, я опоздал на встречу",
+      "Сорри за вчера, не хотел тебя обидеть"
+    ],
+    category: "Общение"
+  },
   "лол": {
     word: "Лол",
     definition: "Смешно, потешно. Сокращение от 'LOL' (Laughing Out Loud) - громко смеюсь.",
@@ -2785,6 +2795,34 @@ const reverseDictionary: Record<string, DictionaryEntry> = {
     definition: "Криво",
     shortTranslation: "криво",
     examples: ["Работает криво"],
+    category: "Общение"
+  },
+  "извини": {
+    word: "Извини",
+    definition: "Сорри",
+    shortTranslation: "сорри",
+    examples: ["Сорри за вчера"],
+    category: "Общение"
+  },
+  "прости": {
+    word: "Прости",
+    definition: "Сорри",
+    shortTranslation: "сорри",
+    examples: ["Сорри, не хотел обидеть"],
+    category: "Общение"
+  },
+  "извините": {
+    word: "Извините",
+    definition: "Сорри",
+    shortTranslation: "сорри",
+    examples: ["Сорри за опоздание"],
+    category: "Общение"
+  },
+  "простите": {
+    word: "Простите",
+    definition: "Сорри",
+    shortTranslation: "сорри",
+    examples: ["Сорри за беспокойство"],
     category: "Общение"
   },
   "смешно": {
@@ -3637,7 +3675,7 @@ export default function App() {
       "шипперь": "своди",
       "шипперьте": "сводите",
       "зашипперить": "свести",
-      "зашипперил": "свел",
+      "зашипп��рил": "свел",
       "зашипперила": "свела",
       "зашипперили": "свели",
       "пошипперить": "посводить",
@@ -3991,7 +4029,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 mb-8">
           {/* Language selector header */}
           <div className="mb-4 flex items-center justify-center gap-4">
-            <div className="bg-yellow-600 border border-yellow-500 rounded-lg px-4 py-3 flex items-center justify-between w-36">
+            <div className="bg-[#E19E2F] border border-[#E19E2F] rounded-lg px-4 py-3 flex items-center justify-between w-36">
               <span className="text-[rgb(255,255,255)] uppercase font-normal text-[16px]">{translationMode === "slangToRussian" ? "Сленг" : "текст"}</span>
             </div>
             
@@ -4006,7 +4044,7 @@ export default function App() {
               </div>
             </Button>
             
-            <div className="bg-yellow-600 border border-yellow-500 rounded-lg px-4 py-3 flex items-center justify-between w-36">
+            <div className="bg-[#E19E2F] border border-[#E19E2F] rounded-lg px-4 py-3 flex items-center justify-between w-36">
               <span className="text-[rgb(255,255,255)] font-[Mako] uppercase">{translationMode === "slangToRussian" ? "текст" : "Сленг"}</span>
             </div>
           </div>

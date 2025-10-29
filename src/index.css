@@ -47,11 +47,6 @@
     --color-amber-50: oklch(.987 .022 95.277);
     --color-amber-500: oklch(.769 .188 70.08);
     --color-amber-600: oklch(.666 .179 58.318);
-    --color-yellow-200: oklch(.945 .129 101.54);
-    --color-yellow-300: oklch(.905 .182 98.111);
-    --color-yellow-500: oklch(.795 .184 86.047);
-    --color-yellow-600: oklch(.681 .162 75.834);
-    --color-yellow-700: oklch(.554 .135 66.442);
     --color-purple-50: oklch(.977 .014 308.299);
     --color-purple-100: oklch(.946 .033 307.174);
     --color-purple-200: oklch(.902 .063 306.703);
@@ -892,6 +887,14 @@
     border-style: none;
   }
 
+  .border-\[\#E19E2F\] {
+    border-color: #e19e2f;
+  }
+
+  .border-\[\#E19E2F\]\/30 {
+    border-color: oklab(74.6667% .0372403 .137797 / .3);
+  }
+
   .border-gray-100 {
     border-color: var(--color-gray-100);
   }
@@ -916,20 +919,16 @@
     border-color: #0000;
   }
 
-  .border-yellow-200 {
-    border-color: var(--color-yellow-200);
-  }
-
-  .border-yellow-500 {
-    border-color: var(--color-yellow-500);
-  }
-
   .border-t-transparent {
     border-top-color: #0000;
   }
 
   .border-l-transparent {
     border-left-color: #0000;
+  }
+
+  .bg-\[\#E19E2F\] {
+    background-color: #e19e2f;
   }
 
   .bg-\[rgb\(255\,215\,0\)\] {
@@ -1008,10 +1007,6 @@
 
   .bg-white {
     background-color: var(--color-white);
-  }
-
-  .bg-yellow-600 {
-    background-color: var(--color-yellow-600);
   }
 
   .p-4 {
@@ -1203,6 +1198,10 @@
     white-space: nowrap;
   }
 
+  .text-\[\#E19E2F\] {
+    color: #e19e2f;
+  }
+
   .text-\[rgb\(255\,255\,255\)\] {
     color: #fff;
   }
@@ -1281,10 +1280,6 @@
 
   .text-white {
     color: var(--color-white);
-  }
-
-  .text-yellow-600 {
-    color: var(--color-yellow-600);
   }
 
   .uppercase {
@@ -1398,8 +1393,8 @@
   }
 
   @media (hover: hover) {
-    .group-hover\:text-yellow-600:is(:where(.group):hover *) {
-      color: var(--color-yellow-600);
+    .group-hover\:text-\[\#E19E2F\]:is(:where(.group):hover *) {
+      color: #e19e2f;
     }
   }
 
@@ -1419,14 +1414,20 @@
   }
 
   @media (hover: hover) {
+    .hover\:border-\[\#E19E2F\]\/50:hover {
+      border-color: oklab(74.6667% .0372403 .137797 / .5);
+    }
+  }
+
+  @media (hover: hover) {
     .hover\:border-amber-500:hover {
       border-color: var(--color-amber-500);
     }
   }
 
   @media (hover: hover) {
-    .hover\:border-yellow-300:hover {
-      border-color: var(--color-yellow-300);
+    .hover\:bg-\[\#C98A26\]:hover {
+      background-color: #c98a26;
     }
   }
 
@@ -1511,12 +1512,6 @@
       .hover\:bg-secondary\/80:hover {
         background-color: color-mix(in oklab, var(--secondary) 80%, transparent);
       }
-    }
-  }
-
-  @media (hover: hover) {
-    .hover\:bg-yellow-700:hover {
-      background-color: var(--color-yellow-700);
     }
   }
 
