@@ -73,9 +73,12 @@ export function PopularWords({ onSelectWord, selectedWord, translationMode, sele
   const allWords = translationMode === "slangToRussian" ? popularSlangWords : popularRussianWords;
   
   // Filter words by category. If selectedCategory is empty (""), show all words
-  const words = selectedCategory === "" 
+  const filteredWords = selectedCategory === "" 
     ? allWords 
     : allWords.filter(word => word.category === selectedCategory);
+  
+  // Limit to 8 words
+  const words = filteredWords.slice(0, 8);
   
   const title = translationMode === "slangToRussian" ? "Популярные запросы" : "Популярные запросы";
   
