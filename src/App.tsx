@@ -4001,7 +4001,7 @@ export default function App() {
               onClick={toggleTranslationMode}
               className="rounded-full hover:bg-gray-100"
             >
-              <div className="w-8 h-8 rounded-full bg-[rgb(117,190,23)] hover:opacity-60 active:bg-[rgb(147,220,53)] transition-all duration-150 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-[rgb(255,215,0)] hover:opacity-60 active:bg-[rgb(147,220,53)] transition-all duration-150 flex items-center justify-center">
                 <ArrowRightLeft className="w-5 h-5 text-gray-600" />
               </div>
             </Button>
