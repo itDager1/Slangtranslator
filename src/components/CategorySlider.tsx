@@ -38,6 +38,18 @@ export function CategorySlider({ selectedCategory, onSelectCategory }: CategoryS
           className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
+          <Button
+            key="all"
+            variant={selectedCategory === "" ? "default" : "outline"}
+            onClick={() => onSelectCategory("")}
+            className={`shrink-0 rounded-lg ${
+              selectedCategory === ""
+                ? "bg-yellow-600 hover:bg-yellow-700 text-white"
+                : "bg-white hover:bg-gray-50 border-gray-200"
+            }`}
+          >
+            Все категории
+          </Button>
           {categories.map((category) => (
             <Button
               key={category}

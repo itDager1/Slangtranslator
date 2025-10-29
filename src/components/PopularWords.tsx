@@ -26,6 +26,9 @@ const popularSlangWords: Word[] = [
   { word: "Нуб", definition: "Новичок", category: "Игры" },
   { word: "Краш", definition: "Объект симпатии", category: "Отношения" },
   { word: "Токсик", definition: "Неприятный человек", category: "Общение" },
+  { word: "Диссить", definition: "Оскорблять, критиковать", category: "Общение" },
+  { word: "Чекать", definition: "Проверять, смотреть", category: "Интернет" },
+  { word: "Скамить", definition: "Выпрашивать, клянчить", category: "Общение" },
   { word: "Жиза", definition: "Жизненная ситуация", category: "Эмоции" },
   { word: "Видос", definition: "Видео, ролик", category: "Интернет" },
   { word: "Сторис", definition: "Истории в соцсетях", category: "Интернет" },
@@ -36,6 +39,7 @@ const popularSlangWords: Word[] = [
   { word: "Влог", definition: "Видеоблог о жизни", category: "Медиа" },
   { word: "Рилс", definition: "Короткие видео", category: "Медиа" },
   { word: "Френдзона", definition: "Дружеская зона", category: "Отношения" },
+  { word: "Шипперить", definition: "Желать, чтобы были вместе", category: "Отношения" },
 ];
 
 const popularRussianWords: Word[] = [
@@ -49,6 +53,10 @@ const popularRussianWords: Word[] = [
   { word: "Нравится", definition: "Краш", category: "Отношения" },
   { word: "Шутка", definition: "Мем", category: "Интернет" },
   { word: "Новичок", definition: "Нуб", category: "Игры" },
+  { word: "Оскорблять", definition: "Диссить", category: "Общение" },
+  { word: "Проверять", definition: "Чекать", category: "Интернет" },
+  { word: "Выпрашивать", definition: "Скамить", category: "Общение" },
+  { word: "Клянчить", definition: "Скамить", category: "Общение" },
   { word: "Круто", definition: "Огонь, Топ, Бомба", category: "Стиль жизни" },
   { word: "Видео", definition: "Видос", category: "Интернет" },
   { word: "Голосовое", definition: "Войс", category: "Интернет" },
@@ -57,13 +65,17 @@ const popularRussianWords: Word[] = [
   { word: "Розыгрыш", definition: "Пранк", category: "Медиа" },
   { word: "Видеоблог", definition: "Влог", category: "Медиа" },
   { word: "Кокетничать", definition: "Флиртовать", category: "Отношения" },
+  { word: "Сводить", definition: "Шипперить", category: "Отношения" },
+  { word: "Желать", definition: "Шипперить", category: "Отношения" },
 ];
 
 export function PopularWords({ onSelectWord, selectedWord, translationMode, selectedCategory }: PopularWordsProps) {
   const allWords = translationMode === "slangToRussian" ? popularSlangWords : popularRussianWords;
   
-  // Filter words by category
-  const words = allWords.filter(word => word.category === selectedCategory);
+  // Filter words by category. If selectedCategory is empty (""), show all words
+  const words = selectedCategory === "" 
+    ? allWords 
+    : allWords.filter(word => word.category === selectedCategory);
   
   const title = translationMode === "slangToRussian" ? "Популярные запросы" : "Популярные запросы";
   
